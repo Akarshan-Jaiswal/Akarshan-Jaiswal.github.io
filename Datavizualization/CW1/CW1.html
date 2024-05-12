@@ -30,13 +30,18 @@
 
     <!-- This script tag loads a JavaScript file into the HTML document -->
     <script type="text/javascript" src="./JS/constants.js"></script>
+    <script>
+        function redirectToIndex() {
+            window.location.href = "../../index.html";
+        }
+    </script>
 
     <!-- This div element contains the initial landing UI structure -->
     <div class="landing-page">
         <div class="page-content">
             <!-- This SVG element creates a logo-->
             <svg class="logo"></svg>
-            <h1>Covid Data Analysis [F20DV-F21DV CW1] </h1>
+            <h1>Covid Data Analysis</h1>
 
             <!-- This paragraph defines information about the project -->
             <p>Data Analysis and Visual representation of Covid pandamic</p>
@@ -46,6 +51,7 @@
             <div id="linechart_button" onclick="toLineChartFunction()">Time distribution of Covid cases</div>
             <div id="scatterplot_button" onclick="toScatterPlotFunction()">Scatter plots</div>
             <div id="streamgraph_button" onclick="toStreamGraphFunction()">Total Contribution of continents in cases</div>
+            <div id="back_to_index" onclick="redirectToIndex()"> Back to Home</div>
         </div>
     </div>
 

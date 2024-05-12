@@ -18,6 +18,11 @@
     </head>
     <body>
         <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script>
+            function redirectToIndex() {
+                window.location.href = "../../index.html";
+            }
+        </script>
         <button id="floating-previous" class="floating-btn floating-btn-left" 
         onclick="openTab(event, 'tab-1')" style="display: none;" style="opacity: 0;"><</button>
         <button id="floating-next" class="floating-btn floating-btn-right" onclick="openTab(event, 'tab-2')">></button>
@@ -26,16 +31,16 @@
         <div id="tab-1" class="tab-pane active landing-page" data-internalid=1 data-position="start">
             <div class="page-content">
                 <h1>GDP & Billionaire index Analysis</h1>
-                <h2>[ F20DV-F21DV CW2 ]</h2>
                 <!-- This paragraph defines information about the project -->
                 <p>A comprehensive data analysis and visual representation of successfull individuals and emerging economies with Technological background.</p>
 
                 <!-- These div elements are for info -->
                 <div class="hover-text" 
-                data-content="The aim of this coursework is to demonstrate the Technological impact in mordern times for successfull individuals. ____________________________________________________________">Aim</div>
+                data-content="The aim of this Project is to demonstrate the Technological impact in mordern times for successfull individuals. ____________________________________________________________">Aim</div>
                 <div class="hover-text" 
                 data-content="You can proceed by clicking on the green arrow (>) on the right side of the page. _______________________________________ ">How to proceed</div>
-                <div class="hover-text" data-content="Akarshan Jaiswal [ H00425264 ] __________________________________">Created by</div>
+                <div class="hover-text" data-content="Akarshan Jaiswal __________________________________">Created by</div>
+                <div class="hover-text" data-content="Click to go back  __________________________________" id="back_to_index" onclick="redirectToIndex()"> Back to Home</div>
             </div>
         </div>
         
@@ -99,6 +104,7 @@
         </div>
         <div id="tab-9" class="tab-pane" data-internalid=9 data-position="end">
             <h2>Thank You</h2>
+            <h2><div id="back_to_index2" onclick="redirectToIndex()"> Back to Home</div></h2>
         </div>
     </body>
 </html>
