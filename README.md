@@ -4,6 +4,8 @@ Portfolio
 A basic portfolio
 visit here https://akarshan-jaiswal.github.io/
 
+LinkedIn profile: https://www.linkedin.com/in/akarshan-jaiswal/
+
 Credits:
 -----------------------
 - Twitter Bootstrap http://getbootstrap.com
