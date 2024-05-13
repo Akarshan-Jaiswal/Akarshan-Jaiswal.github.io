@@ -590,7 +590,7 @@ span.single-timeline-horizontal.spacial-horizontal-line {width: 200px;}
         9. Portfolio
 --------------------------------------*/
 .portfolio {
-    background:  #dffbef;
+    background:  #f9fbfd;
     /*background: url(../images/backgrounds/hex.jpg)no-repeat;*/
     padding:  50px 0 100px;
     border:  1px solid #e5ebf2;
@@ -686,7 +686,7 @@ span.single-timeline-horizontal.spacial-horizontal-line {width: 200px;}
         11. Contact
 --------------------------------------*/
 .contact {
-    background: #f9fbfd;
+    background:  #dafeff;
     padding: 50px 0 100px;
 }
 .single-contact-box {padding-top: 100px;}
