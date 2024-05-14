@@ -32,6 +32,7 @@
 		
         <!--bootstrap.min.css-->
         <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
 		
 		<!-- bootsnav -->
 		<link rel="stylesheet" href="assets/css/bootsnav.css" >	
@@ -41,12 +42,6 @@
         
         <!--responsive.css-->
         <link rel="stylesheet" href="assets/css/responsive.css">
-
-		<style>
-			.cust_indented {
-				text-indent: 20px; /* Adjust the value as needed */
-			}
-		</style>
 
     </head>
 	
@@ -99,13 +94,28 @@
 						<div class="header-text">
 							<h2>hi<span>,</span> i am <br> Akarshan <br> Jaiswal<span>.</span>   </h2>
 							<p>Data Science Master's Student @ Heriot-Watt University and an experienced software Engineer</p>
-							<a href="Downloads/Resume_Akarshan_Jaiswal.pdf" download>Resume [pdf] ⇓</a> </span> 
-							<a href="Downloads/Resume_Akarshan_Jaiswal.docx" download>Resume [docx] ⇓</a>
+							<a href="#styledPopup" class="my-popup-trigger" data-toggle="modal">Download Resume</a>
+								<div class="modal fade" id="styledPopup" tabindex="-1" aria-labelledby="styledPopupLabel" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered">
+									<div class="modal-content">
+										<div class="modal-header">
+										<h5 class="modal-title" id="styledPopupLabel"><b>Download Resume in preffered format</b></h5>
+										<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<a href="Downloads/Resume_Akarshan_Jaiswal.pdf" download>Resume [pdf] ⇓</a> </span> 
+											<a href="Downloads/Resume_Akarshan_Jaiswal.docx" download>Resume [docx] ⇓</a>
+										</div>
+										<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										</div>
+									</div>
+									</div>
+								</div>
 						</div><!--/.header-text-->
 					</div><!--/.col-->
 				</div><!-- /.row-->
 			</div><!-- /.container-->
-
 		</section><!--/.welcome-hero-->
 		<!--welcome-hero end -->
 
