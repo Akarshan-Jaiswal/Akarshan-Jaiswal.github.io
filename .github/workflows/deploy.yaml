@@ -1,5 +1,5 @@
 #------------------------------------------------------------------
-name: Build and Deploy Portfolio to GitHub Pages
+name: "Build and Deploy Portfolio to GitHub Pages"
 
 # Run this workflow on pushes to the main branch
 on:
@@ -28,7 +28,7 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-
+  
       - name: Find and Replace Token 🗝️
         uses: jacobtomlinson/gha-find-replace@v3
         with:
