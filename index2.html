@@ -494,14 +494,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentChatContext = {};
     
     // Hugging Face API integration
-    // IMPORTANT: Replace "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" with your actual token.
-    const HUGGING_FACE_TOKEN = "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"; 
+    // IMPORTANT: Replace "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" with your actual token.
+    const HUGGING_FACE_TOKEN = "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"; 
     const AI_MODEL_URL = "https://router.huggingface.co/v1/chat/completions";
     const AI_MODEL_NAME = "meta-llama/Llama-3.3-70B-Instruct:groq";
 
     async function callAIAPI(messages) {
         try {
-            if (HUGGING_FACE_TOKEN === "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" || !HUGGING_FACE_TOKEN) {
+            if (HUGGING_FACE_TOKEN === "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" || !HUGGING_FACE_TOKEN) {
                 return "AI features are not configured. Please add a Hugging Face API token to the HTML file to enable them.";
             }
 
