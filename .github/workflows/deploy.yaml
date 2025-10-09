@@ -1,25 +1,21 @@
 #------------------------------------------------------------------
-name: "Build and Deploy Portfolio to GitHub Pages"
+name: Build and Deploy Portfolio to GitHub Pages
 
-# Run this workflow on pushes to the main branch
 on:
   push:
     branches:
       - main
 
-# Sets the permissions for the GitHub token to allow deployment
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Build job: prepares the website files
   build:
     runs-on: ubuntu-latest
     steps:
@@ -39,10 +35,8 @@ jobs:
       - name: Upload artifact 📦
         uses: actions/upload-pages-artifact@v3
         with:
-          # This uploads the entire repository, now with the token-replaced index2.html
           path: '.'
 
-  # Deploy job: takes the prepared files and publishes them
   deploy:
     environment:
       name: github-pages
