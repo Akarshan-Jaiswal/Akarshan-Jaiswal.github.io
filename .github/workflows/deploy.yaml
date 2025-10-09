@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # This is the line that grants the necessary permission
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -23,4 +25,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: . # The folder the action should deploy.
+          folder: . # The folder the action should deploy; '.' means the root directory of the repository will be published to GitHub Pages.
