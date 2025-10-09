@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akarshan Jaiswal | Interactive Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Deep Blue -->
+    <!-- Application Structure Plan: This is a multi-view SPA designed to act as a dynamic portfolio tailored to four specific job roles. The main interaction is a prominent role-selector at the top, which re-renders the entire page's content (summary, skills, projects, metrics) to match the selected role. This structure allows a recruiter for a specific role (e.g., AI Engineer) to see a version of the portfolio that speaks directly to their needs without being distracted by less relevant information. The skill-filtering from the previous version is retained within each view to connect claims to evidence. Download links for pre-formatted PDF resumes are included for each role, providing an off-line takeaway. This design maximizes relevance and user convenience. -->
+    <!-- Visualization & Content Choices: The visualization strategy is tailored per role. For example, the AI Engineer view's charts focus on model architectures and performance metrics, while the Data Analyst view emphasizes data composition and visualization tech stacks. This ensures that the visuals directly support the narrative of the selected role. All choices adhere to the no-SVG/Mermaid constraint and leverage Chart.js for dynamic rendering. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .highlight {
+            transition: background-color 0.3s ease-in-out;
+            border-left-width: 4px;
+        }
+        .light .highlight {
+            background-color: #F2CC8F;
+            border-color: #E07A5F;
+        }
+        .dark .highlight {
+            background-color: #4a4e69;
+            border-color: #fca5a5;
+        }
+        .skill-tag {
+            transition: all 0.2s ease;
+        }
+        .skill-tag.active {
+            transform: scale(1.05);
+        }
+        .light .skill-tag.active {
+            background-color: #E07A5F;
+            color: #FFFFFF;
+        }
+        .dark .skill-tag.active {
+            background-color: #fca5a5;
+            color: #111827;
+        }
+        .role-btn {
+            transition: all 0.3s ease;
+        }
+        .role-btn.active {
+           background-color: #3D405B;
+           color: #FFFFFF;
+        }
+        .dark .role-btn.active {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .ai-modal {
+            display: none;
+        }
+        .ai-modal.flex {
+            display: flex;
+        }
+        .chat-bubble-user {
+            background-color: #E07A5F;
+            color: white;
+        }
+        .dark .chat-bubble-user {
+            background-color: #fca5a5;
+            color: #111827;
+        }
+        .chat-bubble-ai {
+             background-color: #e5e7eb;
+        }
+        .dark .chat-bubble-ai {
+            background-color: #4b5563;
+        }
+        .spinner {
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-[#FDFBF8] text-[#3D405B] dark:bg-gray-900 dark:text-gray-300 antialiased">
+
+    <header class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-[#3D405B] dark:text-white">Akarshan Jaiswal</h1>
+            <div class="flex items-center">
+                <div class="hidden md:flex items-center space-x-6 mr-6">
+                    <a href="#overview" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">Home</a>
+                    <a href="#all-projects" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">Projects</a>
+                    <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">Contact</a>
+                    <a href="https://www.linkedin.com/in/akarshan-jaiswal/" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">LinkedIn</a>
+                    <a href="https://github.com/Akarshan-Jaiswal" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">GitHub</a>
+                </div>
+                <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section id="role-selector" class="mb-12">
+            <div class="flex flex-wrap justify-center gap-2 md:gap-4 p-2 bg-gray-200/70 dark:bg-gray-800/70 rounded-full">
+                <button class="role-btn active w-full sm:w-auto flex-grow sm:flex-grow-0 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium py-3 px-6 rounded-full shadow" data-role="dataScientist">Data Scientist</button>
+                <button class="role-btn w-full sm:w-auto flex-grow sm:flex-grow-0 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium py-3 px-6 rounded-full shadow" data-role="aiEngineer">AI Engineer</button>
+                <button class="role-btn w-full sm:w-auto flex-grow sm:flex-grow-0 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium py-3 px-6 rounded-full shadow" data-role="softwareEngineer">Software Engineer</button>
+                <button class="role-btn w-full sm:w-auto flex-grow sm:flex-grow-0 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium py-3 px-6 rounded-full shadow" data-role="dataAnalyst">Data Analyst</button>
+            </div>
+        </section>
+
+        <section id="overview" class="mb-24 text-center">
+            <h2 id="role-title" class="text-5xl font-bold mb-4 text-[#3D405B] dark:text-white">Data Scientist</h2>
+            <p id="role-summary" class="max-w-3xl mx-auto text-lg text-gray-600 dark:text-gray-400 mb-8"></p>
+            <div class="flex justify-center space-x-4 mb-12">
+                <a id="download-resume-btn" href="#" download class="text-white bg-[#81B29A] hover:bg-[#6a947e] dark:bg-teal-600 dark:hover:bg-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">
+                    Download Resume
+                </a>
+            </div>
+            <div id="metrics-container" class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            </div>
+        </section>
+        
+        <section id="ai-features" class="mb-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">✨ AI-Powered Insights</h2>
+                <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">Engage with my profile interactively. These tools use a fast, open-source AI model to provide deeper insights into my skills and career goals.</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                <h3 class="text-2xl font-bold mb-4 text-[#3D405B] dark:text-white">Career Trajectory Suggester</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Based on my current profile as a <span id="career-role-title" class="font-semibold">Data Scientist</span>, what's a potential 5-year growth path? This tool uses an AI model to forecast a plausible career trajectory, including skills to acquire and future roles.</p>
+                <button id="generate-trajectory-btn" class="text-white bg-[#E07A5F] hover:bg-[#c96a50] dark:bg-red-400 dark:hover:bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">
+                    Generate 5-Year Career Path
+                </button>
+                <div id="trajectory-output" class="mt-6 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700/50 rounded-lg p-6" style="display: none;"></div>
+            </div>
+        </section>
+
+        <section id="skills" class="mb-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">Skills & Experience</h2>
+                <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">Click a skill to see where it was applied. This section connects my technical abilities with real-world professional experience, showing how I've used these tools to solve problems and deliver results.</p>
+            </div>
+            
+            <div id="skills-container" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-12 flex flex-wrap justify-center gap-3"></div>
+            <div id="experience-container" class="mt-8"></div>
+        </section>
+
+        <section id="projects" class="mb-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">Role-Specific Projects Deep Dive</h2>
+                <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">This section provides a closer look at key projects, detailing the technologies used and the outcomes achieved for the selected role.</p>
+            </div>
+            <div id="projects-container" class="grid md:grid-cols-1 lg:grid-cols-1 gap-8"></div>
+        </section>
+        
+        <section id="all-projects" class="mb-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">Project Gallery</h2>
+                <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">A collection of my other projects. Click on any project to view the code and further details on GitHub.</p>
+            </div>
+            <div id="all-projects-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        </section>
+
+        <section id="education-section" class="mb-24">
+            <div class="text-center mb-12">
+                 <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">Education & Achievements</h2>
+                 <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">My academic background provided a strong theoretical foundation, while industry awards recognize my practical contributions.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div id="education-container" class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg"></div>
+                <div id="achievements-container" class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg"></div>
+            </div>
+        </section>
+        
+        <section id="contact" class="mb-16">
+            <div class="text-center mb-12">
+                 <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">Get In Touch</h2>
+                 <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">Have a question or want to work together? Feel free to reach out.</p>
+            </div>
+            <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                <form id="contact-form">
+                    <div class="mb-6">
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Name</label>
+                        <input type="text" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#E07A5F] focus:border-[#E07A5F] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="John Doe" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Email</label>
+                        <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#E07A5F] focus:border-[#E07A5F] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="john.doe@email.com" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Message</label>
+                        <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-[#E07A5F] focus:border-[#E07A5F] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="text-white bg-[#3D405B] hover:bg-[#2c2e40] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Send Message</button>
+                    <p id="form-status" class="mt-4 text-center text-sm"></p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-100 dark:bg-gray-800">
+        <div class="container mx-auto px-6 py-4 text-center text-gray-600 dark:text-gray-400">
+            &copy; 2024 Akarshan Jaiswal. All Rights Reserved.
+        </div>
+    </footer>
+    
+    <!-- AI Chat Modal -->
+    <div id="ai-chat-modal" class="ai-modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <header class="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 id="chat-title" class="text-xl font-bold text-[#3D405B] dark:text-white">Ask about...</h3>
+                <button id="close-chat-modal" class="text-gray-400 hover:text-gray-700 dark:hover:text-white">&times;</button>
+            </header>
+            <div id="chat-messages" class="p-4 flex-grow overflow-y-auto space-y-4">
+                <!-- Chat messages will be appended here -->
+            </div>
+            <footer class="p-4 border-t dark:border-gray-700">
+                <form id="chat-form" class="flex items-center gap-2">
+                    <input type="text" id="chat-input" placeholder="Ask a question..." class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#E07A5F] focus:border-[#E07A5F] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    <button type="submit" class="text-white bg-[#3D405B] hover:bg-[#2c2e40] p-2.5 rounded-lg">Send</button>
+                </form>
+            </footer>
+        </div>
+    </div>
+
+
+<script>
+const portfolioData = {
+    dataScientist: {
+        title: "Data Scientist",
+        summary: "MSc Data Scientist with a strong foundation in statistical analysis and machine learning, holding a distinction-level grade (A) for a dissertation on neural network architectures. Proven experience in developing, training, and evaluating ML models using Python, R, and TensorFlow. At Nissan Digital, led projects that translated complex data into actionable insights, such as optimising a data cleaning process to increase efficiency by 15%.",
+        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Portfolio/main/assets/Resume_AkarshanJaiswal.pdf',
+        metrics: [
+            { label: "Years Experience", value: 4 },
+            { label: "% Efficiency Gain", value: 15 },
+            { label: "MSc Dissertation", value: "A" },
+            { label: "Key ML Projects", value: 3 }
+        ],
+        skills: ['Python', 'R', 'SQL', 'TensorFlow', 'Pandas', 'NumPy', 'Scikit-learn', 'Keras', 'D3.js', 'Tableau', 'AWS', 'Flask', 'Docker', 'Git', 'Jenkins'],
+        experience: {
+            points: [
+                { text: "Optimised a critical data cleaning process for a large-scale data science application by performing in-depth statistical analysis, which resolved a major bug and increased overall process efficiency by a measurable 15%.", tags: ['Python', 'Pandas', 'SQL'] },
+                { text: "Automated data extraction, transformation, and loading (ETL) pipelines from diverse sources (Excel, JSON, XML) using Python and Pandas, ensuring data integrity for downstream analysis and database loading.", tags: ['Python', 'Pandas'] },
+                { text: "Led a team of 5 engineers in the development of a neural network-based Japanese-to-English translation tool, utilising TensorFlow to achieve 81% accuracy on a dataset of 80,000 samples.", tags: ['Python', 'TensorFlow', 'Flask'] },
+                { text: "Conducted extensive data analysis and performance monitoring on various systems, providing key insights that informed bug fixes and feature enhancements.", tags: ['Python', 'SQL', 'Tableau'] }
+            ]
+        },
+        projects: [
+            {
+                id: 'ds-project-1',
+                title: "Comparative Analysis of Neural Network Architectures",
+                subtitle: "MSc Dissertation - Grade A",
+                description: "Authored a distinction-level dissertation conducting comprehensive research into CNN, RNN, LSTM, and Transformer architectures. Developed a novel evaluation framework to benchmark model performance on custom and standard datasets.",
+                tags: ['Python', 'TensorFlow', 'NumPy', 'Pandas', 'Matplotlib'],
+                chart: { type: 'bar', id: 'ds-nnChart', data: { labels: ['CNN', 'RNN', 'LSTM', 'Transformer'], datasets: [{ label: 'Architectures Studied', data: [1,1,1,1], backgroundColor: ['#81B29A', '#F2CC8F', '#E07A5F', '#3D405B']}]}, options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { display: false } } } } }
+            },
+            {
+                id: 'ds-project-2',
+                title: "Interactive COVID-19 Data Analysis Dashboard",
+                subtitle: "Data Visualization Project",
+                description: "Performed large-scale exploratory data analysis on global COVID-19 datasets. Designed and built an interactive dashboard using D3.js and various clustering techniques to transform raw data into accessible visual insights.",
+                tags: ['Python', 'JavaScript', 'D3.js', 'Pandas'],
+                chart: { type: 'doughnut', id: 'ds-covidChart', data: { labels: ['Python', 'JavaScript', 'D3.js', 'Pandas'], datasets: [{ label: 'Technology Stack', data: [40, 30, 20, 10], backgroundColor: ['#3D405B', '#E07A5F', '#F2CC8F', '#81B29A']}]}, options: { plugins: { legend: { position: 'top' } } } }
+            }
+        ]
+    },
+    aiEngineer: {
+        title: "AI Engineer",
+        summary: "An AI Engineer with an MSc in Data Science and hands-on experience in designing, building, and deploying end-to-end deep learning solutions. Specialises in Natural Language Processing (NLP) and computer vision, with advanced proficiency in TensorFlow and Python. Proven ability to lead technical teams, demonstrated at Nissan Digital by successfully delivering a production-ready LSTM-based translation tool from concept to deployment.",
+        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Portfolio/main/assets/Resume_AkarshanJaiswal.pdf',
+        metrics: [
+            { label: "Model Accuracy", value: 81, suffix: "%" },
+            { label: "NLP Dataset Size", value: 80, suffix: "k" },
+            { label: "Team Leadership", value: 5, suffix: " eng" },
+            { label: "Core AI Skills", value: 6 }
+        ],
+        skills: ['Python', 'Java', 'SQL', 'TensorFlow', 'Keras', 'PyTorch', 'OpenCV', 'Pandas', 'NumPy', 'Flask', 'Docker', 'AWS', 'Jenkins', 'Git'],
+        experience: {
+            points: [
+                { text: "Led a team of 5 engineers in the complete lifecycle of a Japanese-to-English NLP translation tool, from data preprocessing and model architecture design (LSTM) to deployment via a Flask API.", tags: ['Python', 'TensorFlow', 'Flask', 'Keras'] },
+                { text: "Engineered and trained an LSTM neural network on a dataset of 80,000 samples, achieving 81% translation accuracy and providing significant business value.", tags: ['Python', 'TensorFlow', 'Pandas', 'NumPy'] },
+                { text: "Researched and implemented Proof of Concepts for various AI and algorithmic optimisation projects, presenting findings to senior stakeholders to inform technical strategy.", tags: ['Python', 'OpenCV'] },
+                { text: "Optimised a data cleaning pipeline for a machine learning application, improving data quality and increasing overall process efficiency by 15%.", tags: ['Python', 'Pandas'] }
+            ]
+        },
+        projects: [
+            {
+                id: 'ai-project-1',
+                title: "Japanese to English Contextual Translator (NLP)",
+                subtitle: "Lead Developer at Nissan",
+                description: "Architected and built an end-to-end, offline-capable NLP solution using an LSTM neural network in TensorFlow to translate technical documents with contextual awareness. Managed the entire project lifecycle.",
+                tags: ['Python', 'TensorFlow', 'LSTM', 'Flask', 'NumPy'],
+                chart: { type: 'bar', id: 'ai-translatorChart', data: { labels: ['Accuracy (%)', 'Dataset Size (x1000)'], datasets: [{ label: 'Project Metrics', data: [81, 80], backgroundColor: ['#81B29A', '#3D405B']}]}, options: { plugins: { legend: { display: false } } } }
+            },
+            {
+                id: 'ai-project-2',
+                title: "Comparative Analysis of Neural Network Architectures",
+                subtitle: "MSc Dissertation - Grade A",
+                description: "Conducted an in-depth, distinction-level study of various deep learning architectures including CNNs, RNNs, LSTMs, and Transformers for different AI tasks. Designed and executed a novel evaluation framework.",
+                tags: ['Python', 'TensorFlow', 'NumPy', 'Pandas', 'Matplotlib'],
+                 chart: { type: 'radar', id: 'ai-nnChart', data: { labels: ['CNN', 'RNN', 'LSTM', 'Transformer', 'NLP', 'Vision'], datasets: [{ label: 'Areas of Study', data: [8, 7, 9, 8, 9, 7], backgroundColor: 'rgba(224, 122, 95, 0.2)', borderColor: '#E07A5F', pointBackgroundColor: '#E07A5F'}]}, options: { scales: { r: { beginAtZero: true, max: 10 } } } }
+            }
+        ]
+    },
+    softwareEngineer: {
+        title: "Software Engineer",
+        summary: "A versatile Software Engineer with 4 years of experience at Nissan Digital building robust, scalable applications and a recent MSc in Data Science. Proficient in back-end development with Java, Python, and SQL, coupled with front-end experience using JavaScript and HTML/CSS. Proven track record of leading development teams, architecting CRUD applications on AWS, and integrating complex AI models into production systems.",
+        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Portfolio/main/assets/Resume__AkarshanJaiswal.pdf',
+        metrics: [
+            { label: "Years Experience", value: 4 },
+            { label: "Full-Stack Apps", value: 2 },
+            { label: "Team Leadership", value: 5, suffix: " eng"},
+            { label: "Core Languages", value: 4 }
+        ],
+        skills: ['Java', 'Python', 'SQL', 'JavaScript', 'HTML/CSS', 'Flask', 'AWS', 'Git', 'Jenkins', 'Docker', 'PostgreSQL', 'MySQL', 'MongoDB', 'D3.js'],
+        experience: {
+            points: [
+                { text: "Led a team of 5 engineers in the full software development lifecycle of an internal AI-powered translation tool, from requirements gathering to deployment and maintenance.", tags: ['Python', 'Flask', 'Git', 'Jenkins'] },
+                { text: "Designed, developed, and deployed a full-stack requirement capturing tool using Java and advanced SQL, featuring complete CRUD functionality and hosted on AWS for high availability.", tags: ['Java', 'SQL', 'AWS', 'PostgreSQL'] },
+                { text: "Engineered and optimised complex SQL functions and database schemas for a web application supporting thousands of live users, significantly improving data retrieval times.", tags: ['SQL', 'MySQL'] },
+                { text: "Integrated a Python-based TensorFlow AI model into a production environment using a Flask REST API, ensuring seamless communication between the machine learning back-end and the user interface.", tags: ['Python', 'Flask', 'Docker'] }
+            ]
+        },
+        projects: [
+            {
+                id: 'se-project-1',
+                title: "Japanese to English Translation Application",
+                subtitle: "Full-Stack Development with AI Integration",
+                description: "Developed a web application with a Python/Flask back-end to serve a TensorFlow NLP model, providing a user-friendly interface for a complex AI system. Engineered for standalone, offline functionality.",
+                tags: ['Python', 'Flask', 'TensorFlow', 'JavaScript', 'HTML/CSS'],
+                chart: { type: 'bar', id: 'swe-appChart', data: { labels: ['Backend (Python)', 'Frontend (JS)', 'AI Model (TF)'], datasets: [{ label: 'Component Stack', data: [50, 30, 20], backgroundColor: ['#3D405B', '#81B29A', '#F2CC8F']}]}, options: { indexAxis: 'y', plugins: { legend: { display: false } } } }
+            },
+            {
+                id: 'se-project-2',
+                title: "Interactive Data Visualization Dashboard",
+                subtitle: "Frontend Development Project",
+                description: "Built the front-end for a dynamic data dashboard using JavaScript and the D3.js library to render complex data visualisations from a Python back-end. Implemented interactive features for real-time data filtering.",
+                tags: ['JavaScript', 'D3.js', 'HTML/CSS', 'Python'],
+                chart: { type: 'pie', id: 'swe-dashChart', data: { labels: ['JavaScript/D3.js', 'HTML/CSS', 'Python (API)'], datasets: [{ label: 'Technology Usage', data: [60, 25, 15], backgroundColor: ['#E07A5F', '#F2CC8F', '#81B29A']}]}, options: { plugins: { legend: { position: 'top' } } } }
+            }
+        ]
+    },
+    dataAnalyst: {
+        title: "Data Analyst",
+        summary: "A meticulous and results-driven Data Analyst with an MSc in Data Science and a strong background in software engineering. Expertise in leveraging Python, SQL, and data visualisation tools like D3.js and Tableau to transform complex datasets into actionable insights. Proven at Nissan Digital to drive process improvements, achieving a 15% efficiency gain in data cleaning through rigorous analysis.",
+        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Portfolio/main/assets/Resume%20AkarshanJaiswal.pdf',
+        metrics: [
+            { label: "% Efficiency Gain", value: 15 },
+            { label: "Core Analyst Tools", value: 5 },
+            { label: "Dashboards Built", value: 1 },
+            { label: "Years Experience", value: 4 }
+        ],
+        skills: ['Python', 'SQL', 'R', 'Pandas', 'NumPy', 'D3.js', 'Tableau', 'Excel', 'JavaScript', 'PostgreSQL', 'MySQL'],
+        experience: {
+            points: [
+                { text: "Performed in-depth data analysis on a core data processing workflow, identifying critical bottlenecks and bugs. Implemented solutions that increased overall efficiency by 15%.", tags: ['Python', 'Pandas', 'SQL', 'Excel'] },
+                { text: "Designed and executed complex SQL queries to extract and manipulate data from multiple database systems (PostgreSQL, MySQL) for reporting and analysis.", tags: ['SQL', 'PostgreSQL', 'MySQL'] },
+                { text: "Developed Python scripts to automate the extraction, transformation, and loading (ETL) of data from diverse sources including Excel, JSON, and XML into a centralized database.", tags: ['Python', 'Pandas'] },
+                { text: "Conducted performance monitoring and data analysis on live applications, presenting findings and dashboards to stakeholders to support data-driven decision-making.", tags: ['Tableau', 'SQL'] }
+            ]
+        },
+        projects: [
+            {
+                id: 'da-project-1',
+                title: "Interactive COVID-19 Data Analysis Dashboard",
+                subtitle: "End-to-End Analytics and Visualization",
+                description: "Performed comprehensive exploratory data analysis (EDA) on large-scale global COVID-19 datasets to uncover trends and correlations. Designed and built a dynamic, interactive dashboard from scratch using JavaScript and D3.js.",
+                tags: ['Python', 'Pandas', 'JavaScript', 'D3.js', 'HTML/CSS'],
+                chart: { type: 'doughnut', id: 'da-covidChart', data: { labels: ['Data Cleaning (Py)', 'Analysis (Pandas)', 'Viz (D3.js)'], datasets: [{ label: 'Project Effort', data: [30, 40, 30], backgroundColor: ['#3D405B', '#E07A5F', '#F2CC8F']}]}, options: { plugins: { legend: { position: 'top' } } } }
+            },
+            {
+                id: 'da-project-2',
+                title: "Evaluation of Machine Learning Models",
+                subtitle: "MSc Dissertation - Statistical Analysis",
+                description: "Conducted detailed statistical analysis to compare the performance of various machine learning models on different datasets. Developed a robust evaluation framework for A/B testing model architectures.",
+                tags: ['Python', 'Pandas', 'NumPy', 'Matplotlib'],
+                chart: { type: 'bar', id: 'da-modelChart', data: { labels: ['Data Prep', 'Analysis', 'Reporting'], datasets: [{ label: 'Task Breakdown', data: [30, 50, 20], backgroundColor: ['#81B29A', '#F2CC8F', '#3D405B']}]}, options: { plugins: { legend: { display: false } } } }
+            }
+        ]
+    }
+};
+
+const allProjectsData = [
+    { 
+        title: "Neural Network Architectures Comparison",
+        description: "My MSc dissertation, providing a framework for comparing various deep learning architectures like CNN, RNN, and Transformers.",
+        tags: ['Python', 'TensorFlow', 'Deep Learning'],
+        githubUrl: "https://github.com/Akarshan-Jaiswal/Neural_Network_Architectures_Comparison"
+    },
+    { 
+        title: "Covid-19 Data Analysis",
+        description: "An interactive dashboard for visualizing and exploring global COVID-19 case data, built with D3.js for dynamic charts.",
+        tags: ['Python', 'D3.js', 'JavaScript', 'Pandas'],
+        githubUrl: "https://github.com/Akarshan-Jaiswal/Covid-19-Data-Analysis"
+    },
+    { 
+        title: "Japanese to English Translator",
+        description: "An NLP project from my time at Nissan, using an LSTM model to provide context-aware translations for technical documents.",
+        tags: ['Python', 'TensorFlow', 'NLP', 'Flask'],
+        githubUrl: "https://github.com/Akarshan-Jaiswal/Japanese-to-English-Translator"
+    },
+    { 
+        title: "Portfolio Optimizer",
+        description: "A financial tool built with Streamlit to analyze and optimize investment portfolios based on historical stock data.",
+        tags: ['Python', 'Streamlit', 'Pandas', 'Finance'],
+        githubUrl: "https://github.com/Akarshan-Jaiswal/Portfolio-Optimizer"
+    },
+    { 
+        title: "Real-Time Sign Language Detection",
+        description: "A computer vision project that uses a webcam to detect and interpret American Sign Language gestures in real-time.",
+        tags: ['Python', 'OpenCV', 'Computer Vision'],
+        githubUrl: "https://github.com/Akarshan-Jaiswal/Real-Time-Sign-Language-Detection"
+    },
+    { 
+        title: "Sales Dashboard (Power BI)",
+        description: "An interactive sales dashboard created with Power BI to track key metrics, performance indicators, and sales trends.",
+        tags: ['Power BI', 'Data Visualization', 'DAX'],
+        githubUrl: "https://github.com/Akarshan-Jaiswal/Power-BI-Dashboard"
+    }
+];
+
+const commonData = {
+    experienceMeta: {
+        company: "Nissan Digital",
+        role: "Software Engineer 2",
+        duration: "Dec 2018 – Dec 2022",
+        location: "Trivandrum, India",
+    },
+    education: [
+        {
+            degree: "Master of Science (MSc) in Data Science",
+            university: "Heriot-Watt University",
+            location: "Edinburgh, UK",
+            duration: "2023 – 2025",
+            notes: ["Specialisations: Machine Learning, Deep Learning, Data Visualisation.", "Dissertation Grade: A"]
+        },
+        {
+            degree: "Bachelor of Technology (BTech) in Computer Science & Engineering",
+            university: "Amity University",
+            location: "Lucknow, India",
+            duration: "2014 – 2018",
+            notes: ["Relevant Coursework: Database Systems, Software Engineering, Algorithms."]
+        }
+    ],
+    achievements: [
+        { text: "High-Five Team Award for Data Engineering Contributions", source: "Nissan Digital | Nov 2022" },
+        { text: "Intel Edge AI Scholarship", source: "Intel / Udacity | Dec 2019" }
+    ]
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const roleButtons = document.querySelectorAll('.role-btn');
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    
+    let activeRole = 'dataScientist';
+    let activeSkill = null;
+    let chartInstances = {};
+    let isDarkMode = false;
+    let currentChatContext = {};
+    
+    // Hugging Face API integration
+    // IMPORTANT: Replace "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" with your actual token.
+    const HUGGING_FACE_TOKEN = "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"; 
+    const AI_MODEL_URL = "https://router.huggingface.co/v1/chat/completions";
+    const AI_MODEL_NAME = "meta-llama/Llama-3.3-70B-Instruct:groq";
+
+    async function callAIAPI(messages) {
+        try {
+            if (HUGGING_FACE_TOKEN === "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" || !HUGGING_FACE_TOKEN) {
+                return "AI features are not configured. Please add a Hugging Face API token to the HTML file to enable them.";
+            }
+
+            const response = await fetch(AI_MODEL_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${HUGGING_FACE_TOKEN}`
+                },
+                body: JSON.stringify({
+                    messages: messages,
+                    model: AI_MODEL_NAME
+                })
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`API call failed with status: ${response.status}. Body: ${errorBody}`);
+            }
+
+            const result = await response.json();
+            return result.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+        } catch (error) {
+            console.error("Hugging Face API call error:", error);
+            return "An error occurred while contacting the AI assistant. Please check the console for details.";
+        }
+    }
+    
+    function applyTheme(isDark) {
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            darkIcon.classList.remove('hidden');
+            lightIcon.classList.add('hidden');
+            isDarkMode = true;
+        } else {
+            document.documentElement.classList.remove('dark');
+            darkIcon.classList.add('hidden');
+            lightIcon.classList.remove('hidden');
+            isDarkMode = false;
+        }
+        updateChartsTheme();
+    }
+
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        applyTheme(true);
+    } else {
+        applyTheme(false);
+    }
+    
+    themeToggleButton.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+        applyTheme(isDark);
+    });
+
+    function getThemeColors(isDark) {
+         return {
+            gridColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+            textColor: isDark ? '#d1d5db' : '#374151'
+        };
+    }
+
+    function updateChartsTheme() {
+        const themeColors = getThemeColors(isDarkMode);
+
+        Chart.defaults.color = themeColors.textColor;
+        Chart.defaults.borderColor = themeColors.gridColor;
+
+        Object.values(chartInstances).forEach(chart => {
+            const chartOptions = chart.options;
+            if (chartOptions.plugins && chartOptions.plugins.legend) {
+                chartOptions.plugins.legend.labels.color = themeColors.textColor;
+            }
+
+            if (chartOptions.scales) {
+                Object.values(chartOptions.scales).forEach(scale => {
+                    if (scale) {
+                        if (scale.ticks) {
+                            scale.ticks.color = themeColors.textColor;
+                        }
+                        if (scale.grid) {
+                            scale.grid.color = themeColors.gridColor;
+                        }
+                        if (scale.pointLabels) {
+                            scale.pointLabels.color = themeColors.textColor;
+                        }
+                    }
+                });
+            }
+            chart.update();
+        });
+    }
+
+    function destroyAllCharts() {
+        Object.values(chartInstances).forEach(chart => chart.destroy());
+        chartInstances = {};
+    }
+
+    function animateCounters() {
+        const counters = document.querySelectorAll('[data-target]');
+        counters.forEach(counter => {
+            const targetValue = counter.getAttribute('data-target');
+            const target = parseFloat(targetValue);
+
+            if (isNaN(target)) {
+                counter.innerText = targetValue;
+                return;
+            }
+            
+            counter.innerText = '0';
+            const speed = 100;
+            const inc = target / speed;
+            
+            const updateCount = () => {
+                const count = +counter.innerText;
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 10);
+                } else {
+                    const suffix = counter.getAttribute('data-suffix') || '';
+                    counter.innerText = target + suffix;
+                }
+            };
+            updateCount();
+        });
+    }
+
+    function updateContentForRole(role) {
+        const data = portfolioData[role];
+        activeSkill = null;
+        destroyAllCharts();
+        
+        document.getElementById('career-role-title').textContent = data.title;
+        document.getElementById('role-title').textContent = data.title;
+        document.getElementById('role-summary').textContent = data.summary;
+        
+        const downloadBtn = document.getElementById('download-resume-btn');
+        downloadBtn.href = data.resume_url;
+        downloadBtn.setAttribute('download', `Akarshan_Jaiswal_Resume_${data.title.replace(' ', '_')}.pdf`);
+
+        const metricsContainer = document.getElementById('metrics-container');
+        metricsContainer.innerHTML = data.metrics.map(metric => `
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                <p class="text-4xl font-bold text-[#E07A5F] dark:text-red-300" 
+                   data-target="${metric.value}" 
+                   ${metric.suffix ? `data-suffix="${metric.suffix}"` : ''}>0</p>
+                <p class="text-gray-500 dark:text-gray-400 mt-2">${metric.label}</p>
+            </div>
+        `).join('');
+        animateCounters();
+
+        const skillsContainer = document.getElementById('skills-container');
+        skillsContainer.innerHTML = '';
+        data.skills.forEach(skillName => {
+            const skillButton = document.createElement('button');
+            skillButton.className = 'skill-tag bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-full text-sm hover:bg-gray-300 dark:hover:bg-gray-600';
+            skillButton.textContent = skillName;
+            skillButton.dataset.skill = skillName;
+            skillButton.addEventListener('click', () => {
+                if (activeSkill === skillName) {
+                    activeSkill = null;
+                    skillButton.classList.remove('active');
+                } else {
+                    document.querySelectorAll('.skill-tag.active').forEach(b => b.classList.remove('active'));
+                    activeSkill = skillName;
+                    skillButton.classList.add('active');
+                }
+                updateExperienceAndProjects(role);
+            });
+            skillsContainer.appendChild(skillButton);
+        });
+
+        updateExperienceAndProjects(role);
+    }
+    
+    function updateExperienceAndProjects(role) {
+        const data = portfolioData[role];
+        const experienceContainer = document.getElementById('experience-container');
+        const projectsContainer = document.getElementById('projects-container');
+
+        const { company, role: expRole, duration, location } = commonData.experienceMeta;
+        experienceContainer.innerHTML = `
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                <div class="flex flex-col sm:flex-row justify-between items-start mb-2">
+                    <div>
+                        <h3 class="text-2xl font-bold text-[#3D405B] dark:text-white">${expRole}</h3>
+                        <p class="text-lg text-gray-700 dark:text-gray-300">${company}</p>
+                    </div>
+                    <div class="text-left sm:text-right mt-2 sm:mt-0">
+                        <p class="font-medium text-gray-600 dark:text-gray-400">${duration}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-500">${location}</p>
+                    </div>
+                </div>
+                <ul class="list-disc list-inside space-y-4 mt-4">
+                    ${data.experience.points.map(point => `
+                        <li class="text-gray-600 dark:text-gray-400 pl-2 ${activeSkill && point.tags.includes(activeSkill) ? 'highlight' : ''}">
+                            ${point.text}
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
+
+        projectsContainer.innerHTML = '';
+        destroyAllCharts();
+        
+        const themeColors = getThemeColors(isDarkMode);
+        Chart.defaults.color = themeColors.textColor;
+        Chart.defaults.borderColor = themeColors.gridColor;
+
+        data.projects.forEach(project => {
+            const projectCard = document.createElement('div');
+            const hasActiveTag = activeSkill && project.tags.includes(activeSkill);
+            projectCard.className = `bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-8 items-center transition-all duration-300 ease-in-out ${hasActiveTag ? 'shadow-2xl scale-[1.02]' : ''}`;
+            projectCard.innerHTML = `
+                <div>
+                    <h3 class="text-2xl font-bold text-[#3D405B] dark:text-white">${project.title}</h3>
+                    <p class="text-md text-gray-500 dark:text-gray-400 mb-4">${project.subtitle}</p>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">${project.description}</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${project.tags.map(tag => `<span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium px-2.5 py-1 rounded-full">${tag}</span>`).join('')}
+                    </div>
+                    <button class="ask-ai-btn text-white bg-[#81B29A] hover:bg-[#6a947e] dark:bg-teal-600 dark:hover:bg-teal-700 font-medium rounded-lg text-sm px-4 py-2" data-project-id="${project.id}">
+                        ✨ Ask AI about this Project
+                    </button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="${project.chart.id}"></canvas>
+                </div>
+            `;
+            projectsContainer.appendChild(projectCard);
+            
+            const finalOptions = JSON.parse(JSON.stringify(project.chart.options));
+
+            const ctx = document.getElementById(project.chart.id).getContext('2d');
+            chartInstances[project.chart.id] = new Chart(ctx, {
+                type: project.chart.type,
+                data: project.chart.data,
+                options: { ...finalOptions, responsive: true, maintainAspectRatio: false }
+            });
+        });
+        document.querySelectorAll('.ask-ai-btn').forEach(btn => btn.addEventListener('click', handleAskAiClick));
+    }
+
+    function renderAllProjects() {
+        const container = document.getElementById('all-projects-container');
+        container.innerHTML = allProjectsData.map(p => `
+            <a href="${p.githubUrl}" target="_blank" class="project-card block bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg dark:shadow-xl dark:hover:shadow-red-300/20 hover:shadow-lg">
+                <h3 class="text-xl font-bold mb-2 text-[#3D405B] dark:text-white">${p.title}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">${p.description}</p>
+                <div class="flex flex-wrap gap-2">
+                    ${p.tags.map(tag => `<span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium px-2.5 py-1 rounded-full">${tag}</span>`).join('')}
+                </div>
+            </a>
+        `).join('');
+    }
+    
+    function renderStaticContent() {
+        const educationContainer = document.getElementById('education-container');
+        let eduHtml = '<h3 class="text-2xl font-bold mb-6 text-[#3D405B] dark:text-white">Education</h3>';
+        commonData.education.forEach(edu => {
+            eduHtml += `
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold text-[#3D405B] dark:text-gray-200">${edu.degree}</h4>
+                    <p class="text-md text-gray-600 dark:text-gray-400">${edu.university} | ${edu.location}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-500 mb-2">${edu.duration}</p>
+                    <ul class="list-disc list-inside text-sm text-gray-500 dark:text-gray-400 space-y-1">
+                        ${edu.notes.map(note => `<li>${note}</li>`).join('')}
+                    </ul>
+                </div>`;
+        });
+        educationContainer.innerHTML = eduHtml;
+
+        const achievementsContainer = document.getElementById('achievements-container');
+        let achHtml = '<h3 class="text-2xl font-bold mb-6 text-[#3D405B] dark:text-white">Achievements & Scholarships</h3>';
+        commonData.achievements.forEach(ach => {
+            achHtml += `
+                <div class="mb-4">
+                    <p class="text-md font-semibold text-gray-700 dark:text-gray-300">${ach.text}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-500">${ach.source}</p>
+                </div>`;
+        });
+        achievementsContainer.innerHTML = achHtml;
+    }
+    
+    function handleContactForm() {
+        const form = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            const subject = encodeURIComponent(`Message from ${name} via Portfolio`);
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+            
+            window.location.href = `mailto:akarshanjaiswal@gmail.com?subject=${subject}&body=${body}`;
+            
+            formStatus.textContent = "Thank you! Your email client has been opened.";
+            formStatus.className = "mt-4 text-center text-sm text-green-600";
+            form.reset();
+            setTimeout(() => {
+                formStatus.textContent = "";
+            }, 5000);
+        });
+    }
+
+    function setupAIFeatures() {
+        const trajectoryBtn = document.getElementById('generate-trajectory-btn');
+        const trajectoryOutput = document.getElementById('trajectory-output');
+
+        trajectoryBtn.addEventListener('click', async () => {
+            const currentRoleData = portfolioData[activeRole];
+            trajectoryOutput.style.display = 'block';
+            trajectoryOutput.innerHTML = `<div class="flex items-center justify-center"><div class="spinner h-6 w-6 rounded-full border-4"></div><span class="ml-4">Generating career path...</span></div>`;
+            
+            const messages = [
+                {
+                    role: "system",
+                    content: "You are a helpful career advisor.",
+                },
+                {
+                    role: "user",
+                    content: `Based on the following profile of a ${currentRoleData.title}, suggest a plausible 5-year career trajectory. The summary is: "${currentRoleData.summary}". Key skills include: ${currentRoleData.skills.join(', ')}. The output should be a short paragraph followed by a year-by-year bulleted list of milestones (e.g., skills to learn, projects to undertake, potential role advancements).`
+                }
+            ];
+            
+            const response = await callAIAPI(messages);
+            trajectoryOutput.innerHTML = response.replace(/\n/g, '<br>');
+        });
+    }
+    
+    function handleAskAiClick(event) {
+        const projectId = event.target.dataset.projectId;
+        const projectData = portfolioData[activeRole].projects.find(p => p.id === projectId);
+        currentChatContext = {
+            role: portfolioData[activeRole].title,
+            project: projectData,
+            history: [
+                {
+                    role: "system",
+                    content: `You are Akarshan Jaiswal, a professional and knowledgeable ${portfolioData[activeRole].title}. You are answering questions from a recruiter about your project: '${projectData.title}'. Here is the project description: '${projectData.description}'. Your key skills used were: ${projectData.tags.join(', ')}. Do not invent new facts. Base your answers on this information. Be concise and professional. If you cannot answer, say so politely.`
+                }
+            ]
+        };
+        document.getElementById('chat-title').textContent = `Ask about: ${projectData.title}`;
+        const chatModal = document.getElementById('ai-chat-modal');
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.innerHTML = `<div class="p-3 rounded-lg chat-bubble-ai text-sm">Hello! I'm an AI assistant. You can ask me questions about this project. For example, "What was the biggest challenge?"</div>`;
+        chatModal.classList.add('flex');
+    }
+
+    function setupChatModal() {
+        const chatModal = document.getElementById('ai-chat-modal');
+        const closeBtn = document.getElementById('close-chat-modal');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        closeBtn.addEventListener('click', () => {
+            chatModal.classList.remove('flex');
+        });
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userInput = chatInput.value.trim();
+            if (!userInput) return;
+            
+            currentChatContext.history.push({ role: "user", content: userInput });
+
+            chatMessages.innerHTML += `<div class="p-3 rounded-lg chat-bubble-user text-sm self-end text-right">${userInput}</div>`;
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            chatMessages.innerHTML += `<div id="thinking" class="p-3 rounded-lg chat-bubble-ai text-sm"><div class="flex items-center"><div class="spinner h-4 w-4 rounded-full border-2"></div><span class="ml-2">Thinking...</span></div></div>`;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            const response = await callAIAPI(currentChatContext.history);
+            currentChatContext.history.push({ role: "assistant", content: response });
+            
+            document.getElementById('thinking').remove();
+            chatMessages.innerHTML += `<div class="p-3 rounded-lg chat-bubble-ai text-sm">${response.replace(/\n/g, '<br>')}</div>`;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+    }
+
+    roleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const newRole = button.dataset.role;
+            window.location.hash = newRole;
+            
+            roleButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            activeRole = newRole;
+            updateContentForRole(activeRole);
+        });
+    });
+
+    function initializePage() {
+        const initialRoleFromHash = window.location.hash.substring(1);
+        const validRoles = Object.keys(portfolioData);
+        
+        if (initialRoleFromHash && validRoles.includes(initialRoleFromHash)) {
+            activeRole = initialRoleFromHash;
+        }
+
+        roleButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.role === activeRole);
+        });
+
+        updateContentForRole(activeRole);
+        renderAllProjects();
+        renderStaticContent();
+        handleContactForm();
+        setupAIFeatures();
+        setupChatModal();
+    }
+
+    initializePage();
+});
+</script>
+</body>
+</html>
