@@ -24,12 +24,8 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
-      - name: Find and Replace Token 🗝️
-        uses: jacobtomlinson/gha-find-replace@v3
-        with:
-          find: "YOUR_HUGGING_FACE_TOKEN_HERE"
-          replace: ${{ secrets.HF_TOKEN_AKARSHANJAISWALGITHUBIO }}
-          include: "index2.html"
+      - name: Replace Token with sed 🗝️
+        run: sed -i 's|YOUR_HUGGING_FACE_TOKEN_HERE|${{ secrets.HF_TOKEN_AKARSHANJAISWALGITHUBIO }}|g' index2.html
 
       - name: Upload artifact 📦
         uses: actions/upload-pages-artifact@v3
