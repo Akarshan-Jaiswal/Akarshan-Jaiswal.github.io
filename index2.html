@@ -9,10 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals & Deep Blue -->
-    <!-- Application Structure Plan: This is a multi-view SPA designed to act as a dynamic portfolio tailored to four specific job roles. The main interaction is a prominent role-selector at the top, which re-renders the entire page's content (summary, skills, projects, metrics) to match the selected role. This structure allows a recruiter for a specific role (e.g., AI Engineer) to see a version of the portfolio that speaks directly to their needs without being distracted by less relevant information. The skill-filtering from the previous version is retained within each view to connect claims to evidence. Download links for pre-formatted PDF resumes are included for each role, providing an off-line takeaway. This design maximizes relevance and user convenience. -->
-    <!-- Visualization & Content Choices: The visualization strategy is tailored per role. For example, the AI Engineer view's charts focus on model architectures and performance metrics, while the Data Analyst view emphasizes data composition and visualization tech stacks. This ensures that the visuals directly support the narrative of the selected role. All choices adhere to the no-SVG/Mermaid constraint and leverage Chart.js for dynamic rendering. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -117,10 +113,9 @@
             <div class="flex items-center">
                 <div class="hidden md:flex items-center space-x-6 mr-6">
                     <a href="#overview" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">Home</a>
+                    <a href="#about" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">About</a>
                     <a href="#all-projects" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">Projects</a>
                     <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">Contact</a>
-                    <a href="https://www.linkedin.com/in/akarshan-jaiswal/" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">LinkedIn</a>
-                    <a href="https://github.com/Akarshan-Jaiswal" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-[#E07A5F] dark:hover:text-red-300 font-medium">GitHub</a>
                 </div>
                 <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                     <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
@@ -152,6 +147,24 @@
             </div>
         </section>
         
+        <section id="about" class="mb-24">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">About Me</h2>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                <div class="grid md:grid-cols-3 gap-8 items-center">
+                    <div class="md:col-span-1">
+                        <img src="https://avatars.githubusercontent.com/u/31000074" alt="Akarshan Jaiswal" class="rounded-full mx-auto w-48 h-48 md:w-64 md:h-64 object-cover shadow-lg">
+                    </div>
+                    <div class="md:col-span-2 text-gray-600 dark:text-gray-400">
+                        <h3 id="about-title" class="text-2xl font-bold mb-4 text-[#3D405B] dark:text-white"></h3>
+                        <p id="about-text-1" class="mb-4"></p>
+                        <p id="about-text-2"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="ai-features" class="mb-24">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">✨ AI-Powered Insights</h2>
@@ -159,11 +172,18 @@
             </div>
             <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
                 <h3 class="text-2xl font-bold mb-4 text-[#3D405B] dark:text-white">Career Trajectory Suggester</h3>
-                <p class="text-gray-600 dark:text-gray-400 mb-6">Based on my current profile as a <span id="career-role-title" class="font-semibold">Data Scientist</span>, what's a potential 5-year growth path? This tool uses an AI model to forecast a plausible career trajectory, including skills to acquire and future roles.</p>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Based on my current profile as a <span id="career-role-title" class="font-semibold">Data Scientist</span>, what's a potential 5-year growth path? This tool uses an AI model to forecast a plausible career trajectory and visualizes it as a timeline.</p>
                 <button id="generate-trajectory-btn" class="text-white bg-[#E07A5F] hover:bg-[#c96a50] dark:bg-red-400 dark:hover:bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition">
                     Generate 5-Year Career Path
                 </button>
-                <div id="trajectory-output" class="mt-6 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700/50 rounded-lg p-6" style="display: none;"></div>
+                <div id="trajectory-output" class="mt-6" style="display: none;">
+                    <div class="grid md:grid-cols-2 gap-8 items-start">
+                        <div id="trajectory-text-container" class="text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700/50 rounded-lg p-6"></div>
+                        <div class="chart-container" style="height: 280px; max-height: 300px;">
+                             <canvas id="career-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -210,23 +230,66 @@
                  <h2 class="text-4xl font-bold mb-2 text-[#3D405B] dark:text-white">Get In Touch</h2>
                  <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">Have a question or want to work together? Feel free to reach out.</p>
             </div>
-            <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-                <form id="contact-form">
-                    <div class="mb-6">
-                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Name</label>
-                        <input type="text" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#E07A5F] focus:border-[#E07A5F] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="John Doe" required>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                    <form id="contact-form">
+                        <div class="mb-6">
+                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Name</label>
+                            <input type="text" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#E07A5F] focus:border-[#E07A5F] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="John Doe" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Email</label>
+                            <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#E07A5F] focus:border-[#E07A5F] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="john.doe@email.com" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Message</label>
+                            <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-[#E07A5F] focus:border-[#E07A5F] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Your message..." required></textarea>
+                        </div>
+                        <button type="submit" class="text-white bg-[#3D405B] hover:bg-[#2c2e40] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Send Message</button>
+                        <p id="form-status" class="mt-4 text-center text-sm"></p>
+                    </form>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-[#3D405B] dark:text-white mb-4">Contact Details</h3>
+                    <div class="space-y-4 text-gray-600 dark:text-gray-400">
+                        <div>
+                            <h4 class="font-semibold">Email</h4>
+                            <a href="mailto:akarshanjaiswal@gmail.com" class="hover:text-[#E07A5F]">akarshanjaiswal@gmail.com</a>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Phone</h4>
+                            <p><a href="tel:+447766372593" class="hover:text-[#E07A5F]">+44 7766 372593</a> (UK)</p>
+                            <p><a href="tel:+919918392543" class="hover:text-[#E07A5F]">+91 99183 92543</a> (India)</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Current Address</h4>
+                            <p>Edinburgh, Scotland, United Kingdom</p>
+                        </div>
                     </div>
-                    <div class="mb-6">
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Email</label>
-                        <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#E07A5F] focus:border-[#E07A5F] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="john.doe@email.com" required>
-                    </div>
-                    <div class="mb-6">
-                        <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your Message</label>
-                        <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-[#E07A5F] focus:border-[#E07A5F] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Your message..." required></textarea>
-                    </div>
-                    <button type="submit" class="text-white bg-[#3D405B] hover:bg-[#2c2e40] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Send Message</button>
-                    <p id="form-status" class="mt-4 text-center text-sm"></p>
-                </form>
+                    <h3 class="text-xl font-bold text-[#3D405B] dark:text-white mt-8 mb-4">Find me on</h3>
+                     <div class="flex flex-wrap gap-x-6 gap-y-4">
+                        <a href="https://www.linkedin.com/in/akarshan-jaiswal/" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-[#E07A5F] dark:text-gray-400 dark:hover:text-red-300 transition-colors">
+                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                           <span>LinkedIn</span>
+                        </a>
+                        <a href="https://github.com/Akarshan-Jaiswal" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-[#E07A5F] dark:text-gray-400 dark:hover:text-red-300 transition-colors">
+                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                           <span>GitHub</span>
+                        </a>
+                        <a href="https://medium.com/@akarshanjaiswal" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-[#E07A5F] dark:text-gray-400 dark:hover:text-red-300 transition-colors">
+                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.002 18.257c-.503 0-.91-.406-.91-.91s.407-.91.91-.91.91.406.91.91-.407.91-.91.91zm5.352-1.82c0 2.59-1.543 4.69-3.447 4.69s-3.447-2.1-3.447-4.69c0-2.59 1.543-4.69 3.447-4.69s3.447 2.1 3.447 4.69zm6.155 0c0 2.54-1.22 4.594-2.723 4.594s-2.723-2.054-2.723-4.594c0-2.54 1.22-4.594 2.723-4.594s2.723 2.054 2.723 4.594zm5.491-.182c0 2.4-1.04 4.34-2.324 4.34s-2.324-1.94-2.324-4.34c0-2.4 1.04-4.34 2.324-4.34s2.324 1.94 2.324 4.34z"/></svg>
+                           <span>Medium</span>
+                        </a>
+                        <a href="https://www.instagram.com/akarshan.jaiswal/" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-[#E07A5F] dark:text-gray-400 dark:hover:text-red-300 transition-colors">
+                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.85s.012-3.584.07-4.85c.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.85-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.947s-.014-3.667-.072-4.947c-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                           <span>Instagram</span>
+                        </a>
+                        <a href="https://www.youtube.com/@AkarshanJaiswal" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-[#E07A5F] dark:text-gray-400 dark:hover:text-red-300 transition-colors">
+                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                           <span>YouTube</span>
+                        </a>
+                     </div>
+                </div>
             </div>
         </section>
     </main>
@@ -261,8 +324,13 @@
 const portfolioData = {
     dataScientist: {
         title: "Data Scientist",
-        summary: "MSc Data Scientist with a strong foundation in statistical analysis and machine learning, holding a distinction-level grade (A) for a dissertation on neural network architectures. Proven experience in developing, training, and evaluating ML models using Python, R, and TensorFlow. At Nissan Digital, led projects that translated complex data into actionable insights, such as optimising a data cleaning process to increase efficiency by 15%.",
-        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Portfolio/main/assets/Resume_AkarshanJaiswal.pdf',
+        summary: "MSc Data Scientist with a strong foundation in statistical analysis and machine learning. Proven experience in developing, training, and evaluating ML models using Python, R, and TensorFlow. At Nissan Digital, led projects that translated complex data into actionable insights, such as optimising a data cleaning process to increase efficiency by 15%.",
+        about: {
+            title: "From Software Engineering to the Future of Data.",
+            p1: "I am driven to leverage technology and data analysis for impactful Data Science and Artificial Intelligence solutions. My goal is to transform complex datasets into actionable insights using Python, R, and modern visualization tools. I specialize in designing and implementing ML predictive models and building neural networks for real-world problem-solving using libraries such as TensorFlow.",
+            p2: "With experience in domains like Data Science, PLM, Web Development, and algorithm optimization, I have a strong foundation in creating workflows, implementing Agile methodologies (Kanban/Scrum), and performing in-depth data analysis and system debugging."
+        },
+        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Akarshan-Jaiswal.github.io/main/Downloads/Resume_AkarshanJaiswal.pdf',
         metrics: [
             { label: "Years Experience", value: 4 },
             { label: "% Efficiency Gain", value: 15 },
@@ -300,7 +368,12 @@ const portfolioData = {
     aiEngineer: {
         title: "AI Engineer",
         summary: "An AI Engineer with an MSc in Data Science and hands-on experience in designing, building, and deploying end-to-end deep learning solutions. Specialises in Natural Language Processing (NLP) and computer vision, with advanced proficiency in TensorFlow and Python. Proven ability to lead technical teams, demonstrated at Nissan Digital by successfully delivering a production-ready LSTM-based translation tool from concept to deployment.",
-        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Portfolio/main/assets/Resume_AkarshanJaiswal.pdf',
+         about: {
+            title: "Architecting Intelligent Systems.",
+            p1: "As an AI Engineer, my passion lies in architecting and building end-to-end deep learning solutions. I specialize in taking a concept from a proof-of-concept to a production-ready system, with a particular focus on Natural Language Processing (NLP) and computer vision. I enjoy the challenge of designing robust model architectures and deploying them in real-world applications.",
+            p2: "My experience leading the development of a translation tool at Nissan honed my skills in managing the entire project lifecycle, from data preprocessing to API deployment. I am driven by the process of creating intelligent systems that solve tangible problems."
+        },
+        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Akarshan-Jaiswal.github.io/main/Downloads/Resume_AI_Engineer.pdf',
         metrics: [
             { label: "Model Accuracy", value: 81, suffix: "%" },
             { label: "NLP Dataset Size", value: 80, suffix: "k" },
@@ -338,7 +411,12 @@ const portfolioData = {
     softwareEngineer: {
         title: "Software Engineer",
         summary: "A versatile Software Engineer with 4 years of experience at Nissan Digital building robust, scalable applications and a recent MSc in Data Science. Proficient in back-end development with Java, Python, and SQL, coupled with front-end experience using JavaScript and HTML/CSS. Proven track record of leading development teams, architecting CRUD applications on AWS, and integrating complex AI models into production systems.",
-        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Portfolio/main/assets/Resume__AkarshanJaiswal.pdf',
+        about: {
+            title: "Building Robust and Scalable Solutions.",
+            p1: "As a Software Engineer, I am passionate about building clean, efficient, and scalable applications. My background in computer science fundamentals and my professional experience have given me a strong command of back-end technologies like Java and Python, as well as database management with SQL.",
+            p2: "At Nissan, I led the development of a full-stack requirement capturing tool and engineered complex SQL functions for high-traffic applications. I enjoy the entire software development lifecycle, from architecting solutions on AWS to the final deployment, and I'm particularly interested in the intersection of traditional software engineering and machine learning integration."
+        },
+        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Akarshan-Jaiswal.github.io/main/Downloads/Resume_Software_Engineer.pdf',
         metrics: [
             { label: "Years Experience", value: 4 },
             { label: "Full-Stack Apps", value: 2 },
@@ -376,7 +454,12 @@ const portfolioData = {
     dataAnalyst: {
         title: "Data Analyst",
         summary: "A meticulous and results-driven Data Analyst with an MSc in Data Science and a strong background in software engineering. Expertise in leveraging Python, SQL, and data visualisation tools like D3.js and Tableau to transform complex datasets into actionable insights. Proven at Nissan Digital to drive process improvements, achieving a 15% efficiency gain in data cleaning through rigorous analysis.",
-        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Portfolio/main/assets/Resume%20AkarshanJaiswal.pdf',
+        about: {
+            title: "Uncovering Insights and Telling Stories with Data.",
+            p1: "I am a Data Analyst who is passionate about digging into data to uncover the stories hidden within. I enjoy the process of cleaning, transforming, and analyzing complex datasets to find actionable insights that can drive business decisions. My strengths lie in using tools like Python, Pandas, and SQL to manipulate data and visualization libraries like D3.js and Tableau to present my findings clearly.",
+            p2: "My experience in optimizing a data cleaning process by 15% at Nissan highlights my ability to not only analyze data but also to identify and solve practical business problems. I am driven by the challenge of making data understandable and impactful for stakeholders at all levels."
+        },
+        resume_url: 'https://raw.githubusercontent.com/Akarshan-Jaiswal/Akarshan-Jaiswal.github.io/main/Downloads/Resume_Data_Analyst.pdf',
         metrics: [
             { label: "% Efficiency Gain", value: 15 },
             { label: "Core Analyst Tools", value: 5 },
@@ -455,9 +538,9 @@ const allProjectsData = [
 const commonData = {
     experienceMeta: {
         company: "Nissan Digital",
-        role: "Software Engineer 2",
+        role: "Software Engineer",
         duration: "Dec 2018 – Dec 2022",
-        location: "Trivandrum, India",
+        location: "Thiruvananthapuram, India",
     },
     education: [
         {
@@ -465,18 +548,19 @@ const commonData = {
             university: "Heriot-Watt University",
             location: "Edinburgh, UK",
             duration: "2023 – 2025",
-            notes: ["Specialisations: Machine Learning, Deep Learning, Data Visualisation.", "Dissertation Grade: A"]
+            notes: ["Developed proficiency in statistical analysis, machine learning, deep learning, Python, and R.", "Handled large datasets to derive actionable insights for informed decision-making."]
         },
         {
             degree: "Bachelor of Technology (BTech) in Computer Science & Engineering",
             university: "Amity University",
             location: "Lucknow, India",
             duration: "2014 – 2018",
-            notes: ["Relevant Coursework: Database Systems, Software Engineering, Algorithms."]
+            notes: ["Developed expertise in software development, algorithms, and system architecture.", "Gained experience in solving complex problems and designing efficient solutions."]
         }
     ],
     achievements: [
         { text: "High-Five Team Award for Data Engineering Contributions", source: "Nissan Digital | Nov 2022" },
+        { text: "High-Five Team Award for Test Car Requirements Platform", source: "Nissan Digital | Jul 2021" },
         { text: "Intel Edge AI Scholarship", source: "Intel / Udacity | Dec 2019" }
     ]
 };
@@ -499,17 +583,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentChatContext = {};
     
     // Hugging Face API integration
-    const HUGGING_FACE_TOKEN = T+O+K+E+N;; 
-    const AI_MODEL_URL = "https://router.huggingface.co/v1/chat/completions";
+    const HUGGING_FACE_TOKEN = T+O+K+E+N; 
+    const AI_API_URL = "https://router.huggingface.co/v1/chat/completions";
     const AI_MODEL_NAME = "meta-llama/Llama-3.3-70B-Instruct:groq";
 
     async function callAIAPI(messages) {
         try {
-            if (HUGGING_FACE_TOKEN === "YOUR_HUGGING_FACE_TOKEN_HERE" || !HUGGING_FACE_TOKEN) {
-                return "AI features are not configured. Please add a Hugging Face API token to the HTML file to enable them.";
+            if (!HUGGING_FACE_TOKEN || HUGGING_FACE_TOKEN.length < 10) {
+                return "AI features are not configured. Please add a valid Hugging Face API token.";
             }
 
-            const response = await fetch(AI_MODEL_URL, {
+            const response = await fetch(AI_API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -641,6 +725,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('career-role-title').textContent = data.title;
         document.getElementById('role-title').textContent = data.title;
         document.getElementById('role-summary').textContent = data.summary;
+
+        document.getElementById('about-title').textContent = data.about.title;
+        document.getElementById('about-text-1').textContent = data.about.p1;
+        document.getElementById('about-text-2').textContent = data.about.p2;
         
         const downloadBtn = document.getElementById('download-resume-btn');
         downloadBtn.href = data.resume_url;
@@ -814,28 +902,113 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let careerChartInstance = null;
+    function renderCareerChart(chartData) {
+        const ctx = document.getElementById('career-chart').getContext('2d');
+        if (careerChartInstance) {
+            careerChartInstance.destroy();
+        }
+
+        const labels = chartData.map(item => item.year);
+        const data = chartData.map(item => item.milestones.length); 
+        
+        careerChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Number of Milestones',
+                    data: data,
+                    backgroundColor: ['#81B29A', '#F2CC8F', '#E07A5F', '#3D405B', '#8E8D8A'],
+                    borderColor: 'rgba(0,0,0,0)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` Focus: ${chartData[context.dataIndex].focus}`;
+                            },
+                             title: function(context) {
+                                return `${context[0].label} (${chartData[context[0].dataIndex].milestones.length} milestones)`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { 
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Milestones'
+                        },
+                        beginAtZero: true,
+                         ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        updateChartsTheme();
+    }
+
+
     function setupAIFeatures() {
         const trajectoryBtn = document.getElementById('generate-trajectory-btn');
         const trajectoryOutput = document.getElementById('trajectory-output');
+        const trajectoryTextContainer = document.getElementById('trajectory-text-container');
 
         trajectoryBtn.addEventListener('click', async () => {
             const currentRoleData = portfolioData[activeRole];
             trajectoryOutput.style.display = 'block';
-            trajectoryOutput.innerHTML = `<div class="flex items-center justify-center"><div class="spinner h-6 w-6 rounded-full border-4"></div><span class="ml-4">Generating career path...</span></div>`;
+            trajectoryTextContainer.innerHTML = `<div class="flex items-center justify-center"><div class="spinner h-6 w-6 rounded-full border-4"></div><span class="ml-4">Generating career path...</span></div>`;
+            if (careerChartInstance) careerChartInstance.destroy();
             
             const messages = [
                 {
                     role: "system",
-                    content: "You are a helpful career advisor. Provide clear, concise, and realistic career advice based on the user's professional profile.",
+                    content: "You are a helpful career advisor. Provide clear, concise, positive, and realistic career advice based on the user's professional profile.",
                 },
                 {
                     role: "user",
-                    content: `Based on the following profile of a ${currentRoleData.title}, suggest a plausible 5-year career trajectory. The summary is: "${currentRoleData.summary}". Key skills include: ${currentRoleData.skills.join(', ')}. The output should be a short paragraph followed by a year-by-year bulleted list of milestones (e.g., skills to learn, projects to undertake, potential role advancements). Present all of it in a proper formatted text as it would look in a professional document.`
+                    content: `Based on the following profile of a ${currentRoleData.title} (Summary: "${currentRoleData.summary}", Skills: ${currentRoleData.skills.join(', ')}), suggest a plausible 5-year career trajectory. First, provide a short summary paragraph. Second, provide a year-by-year bulleted list of detailed milestones (e.g., skills to learn, projects to undertake, potential role advancements). Finally, after the bulleted list, provide ONLY a valid JSON array of objects for the 5 years. Each object must have a 'year' (e.g., 'Year 1'), a 'focus' (a short title for that year's main goal), and a 'milestones' array containing short strings for each key achievement for that year. The number of milestones per year should vary to reflect a realistic progression as having the same number of milestones each year would be unrealistic. The JSON must be enclosed in a single markdown code block like this: \`\`\`json\n[...]\n\`\`\` `
                 }
             ];
             
             const response = await callAIAPI(messages);
-            trajectoryOutput.innerHTML = response.replace(/\n/g, '<br>');
+            
+            const jsonRegex = /```json\s*([\s\S]*?)\s*```/;
+            const match = response.match(jsonRegex);
+
+            if (match && match[1]) {
+                const jsonString = match[1];
+                const textPart = response.replace(jsonRegex, '').trim();
+                trajectoryTextContainer.innerHTML = textPart.replace(/\n/g, '<br>');
+                try {
+                    const chartData = JSON.parse(jsonString);
+                    renderCareerChart(chartData);
+                } catch (e) {
+                    console.error("Failed to parse JSON for chart:", e);
+                    if(careerChartInstance) careerChartInstance.destroy();
+                }
+            } else {
+                trajectoryTextContainer.innerHTML = response.replace(/\n/g, '<br>');
+                 if(careerChartInstance) careerChartInstance.destroy();
+            }
         });
     }
     
