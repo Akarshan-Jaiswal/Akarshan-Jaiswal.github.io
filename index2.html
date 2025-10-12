@@ -826,11 +826,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const messages = [
                 {
                     role: "system",
-                    content: "You are a helpful career advisor.",
+                    content: "You are a helpful career advisor. Provide clear, concise, and realistic career advice based on the user's professional profile.",
                 },
                 {
                     role: "user",
-                    content: `Based on the following profile of a ${currentRoleData.title}, suggest a plausible 5-year career trajectory. The summary is: "${currentRoleData.summary}". Key skills include: ${currentRoleData.skills.join(', ')}. The output should be a short paragraph followed by a year-by-year bulleted list of milestones (e.g., skills to learn, projects to undertake, potential role advancements).`
+                    content: `Based on the following profile of a ${currentRoleData.title}, suggest a plausible 5-year career trajectory. The summary is: "${currentRoleData.summary}". Key skills include: ${currentRoleData.skills.join(', ')}. The output should be a short paragraph followed by a year-by-year bulleted list of milestones (e.g., skills to learn, projects to undertake, potential role advancements). Present all of it in a proper formatted text as it would look in a professional document.`
                 }
             ];
             
